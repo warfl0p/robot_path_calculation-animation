@@ -129,7 +129,7 @@ def plotDistWorkspaceTraj(window):
 def plotWorkspace(window):
     checkWorkspace()
     fig1 = plt.figure() 
-    placePlotInFrame(fig1,window)                                                               #workspace vergelijken met pad van 1 naar 2
+    placePlotInFrame(fig1,window)                   #workspace vergelijken met pad van 1 naar 2
     ax1 = fig1.add_subplot(1,1,1, projection='3d',title='workspace')
     ax1.plot( workspace[:,0], workspace[:,1], workspace[:,2], 'b.' )
     ax1.plot( x1_traj, y1_traj, z1_traj, 'r-' )
