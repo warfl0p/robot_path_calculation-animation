@@ -1,11 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy as sc
 from scipy.spatial import KDTree
 from datetime import datetime
 from matplotlib import animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import tkinter as tk
 from robot_path_info import *
 start=datetime.now()
 
@@ -96,7 +94,7 @@ def checkWorkspace():
         calculateWorkspace()
     checkWorkspace.__code__ = (lambda:None).__code__                                #zet de functie na 1 keer runnen naar None, omdat workspace global variable is en dus niet veranderd, moet maar 1 keer uitgerekend worden
 
-dh_table = getdh_table(varStartList)           #dhtable restten 
+dh_table = getdh_table(varStartList)           #dhtable resetten 
 Tlist=dhTransform(dh_table,True)
 p_0_ee=xyz(Tlist,ee,True)
 startpunt=[p_0_ee[0][0], p_0_ee[1][0],p_0_ee[2][0]]
@@ -113,16 +111,16 @@ else:
 z2_traj     = np.linspace(punt1[2], punt2[2] , num=N2)                                #cirkel varieert in hoogte==pog
 path=np.hstack([np.vstack([x1_traj, y1_traj, z1_traj]),np.vstack([x2_traj, y2_traj, z2_traj])]).T
 
-def dist_closest():
+def distance_closest():
     checkWorkspace()
     tree=KDTree(workspace)
-    dist=tree.query(path)
-    return dist
+    distance=tree.query(path)
+    return distance
 
 def plotDistWorkspaceTraj(window):
     fig=plt.figure()
     placePlotInFrame(fig,window)
-    plt.plot(np.linspace(0, N2*2, num=N2*2), dist_closest()[0])
+    plt.plot(np.linspace(0, N2*2, num=N2*2), distance_closest()[0])
     plt.title('distance workspace-trajectory')
     plt.savefig("output.jpg")
 
@@ -188,7 +186,8 @@ def animateParthRobot(window):
     fig3 = plt.figure()
     placePlotInFrame(fig3,window)
     ax3 = fig3.add_subplot( projection='3d',title='animation path')
-    sct, = ax3.plot([], [], [], "or--", markersize=2)
+    # sct, = ax3.plot([], [], [], "or--", markersize=2)
+    sct, = ax3.plot([], [], [], "#1f77b4", markersize=2, linestyle= 'dashed', marker= 'o')
     steps=int(N2*2/stepsVerlaging)
     def generateFrame(ifrm):
         for j in range(dof):
@@ -200,8 +199,9 @@ def animateParthRobot(window):
         sct.set_3d_properties(total_robot[2])
     ax3.plot(x1_traj, y1_traj, z1_traj, 'r-')
     ax3.plot(x2_traj, y2_traj, z2_traj, 'g-')
-    ani = animation.FuncAnimation(fig3, generateFrame, steps, interval=1000/30*stepsVerlaging)
-    ani.save('pen.gif',writer='pillow',fps=30/stepsVerlaging)
+    ani = animation.FuncAnimation(fig3, generateFrame, steps, interval=1000/N2)
+    # ani = animation.FuncAnimation(fig3, generateFrame, 1999, interval=1)
+    ani.save('pen.gif',writer='pillow',fps=N2)
     window.mainloop()
 
 def placePlotInFrame(figure, window):
@@ -209,7 +209,7 @@ def placePlotInFrame(figure, window):
     canvas.draw()
     toolbar =   NavigationToolbar2Tk(canvas, window, pack_toolbar =False)
     toolbar.update()
-    canvas.get_tk_widget().grid(sticky='W',column=1, row=2,padx=10, pady=10)
+    canvas.get_tk_widget().grid(sticky='W',column=0, row=2,padx=10, pady=10)
     
 print ('runtime: ',datetime.now()-start)
 

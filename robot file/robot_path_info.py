@@ -1,7 +1,7 @@
 import numpy as np
 # from flexie import *
 
-N1=14                           #iteraties workspace
+N1=10                           #iteraties workspace
 N2=400                          #iteraties path
 stepsVerlaging=10               #resolutie animatie verlagen
 dof=5                           #bepaald hoeveel joints er berekent worden
