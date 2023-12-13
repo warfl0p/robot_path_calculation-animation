@@ -106,9 +106,9 @@ if circle==True:
     x2_traj = punt1[0] + ra*np.cos(-np.linspace(0, 2*np.pi, num=N2))
     y2_traj = punt1[1] + ra*np.sin(-np.linspace(0, 2*np.pi, num=N2))
 else:
-    x2_traj = np.linspace(punt1[0], punt2[0] , num=N2)                            #pad van punt 1 naar 2 
+    x2_traj = np.linspace(punt1[0], punt2[0] , num=N2)                              #pad van punt 1 naar 2 
     y2_traj = np.linspace(punt1[1], punt2[1] , num=N2)
-z2_traj     = np.linspace(punt1[2], punt2[2] , num=N2)                                #cirkel varieert in hoogte==pog
+z2_traj     = np.linspace(punt1[2], punt2[2] , num=N2)                              #cirkel varieert in hoogte==pog
 path=np.hstack([np.vstack([x1_traj, y1_traj, z1_traj]),np.vstack([x2_traj, y2_traj, z2_traj])]).T
 
 def distance_closest():
@@ -160,6 +160,8 @@ def computePathRobot():
     computePathRobot.__code__ = (lambda:None).__code__
 
 def plotPathRobot(window):
+    global eeList
+    eeList= []
     computePathRobot()
     fig2 = plt.figure()
     placePlotInFrame(fig2,window)
@@ -173,15 +175,19 @@ def plotPathRobot(window):
         total_robot=xyz(Tlist,ee,False)
         p_1_ee=Tlist=np.dot(dhTransform(dh_table,True),ee)
         if (i/30).is_integer():
-            ax2.plot(total_robot[0],total_robot[1],total_robot[2])
+            ax2.plot(total_robot[0],total_robot[1],total_robot[2])                   
+            distancePathee(p_1_ee)      #voor zelfde punten wordt afstand tot eerste pad berekend
             ax2.plot( p_1_ee[0], p_1_ee[1], p_1_ee[2], 'b.')
     ax2.plot(x1_traj, y1_traj, z1_traj, 'r-')
     ax2.plot(x2_traj, y2_traj, z2_traj, 'g-')
     ax2.set_xlabel('x')
     ax2.set_ylabel('y')
     ax2.set_zlabel('z')
+    
+    plt.savefig("output.jpg")
+    
 
-def animateParthRobot(window):
+def animatePathRobot(window):
     computePathRobot()
     fig3 = plt.figure()
     placePlotInFrame(fig3,window)
@@ -210,7 +216,15 @@ def placePlotInFrame(figure, window):
     toolbar =   NavigationToolbar2Tk(canvas, window, pack_toolbar =False)
     toolbar.update()
     canvas.get_tk_widget().grid(sticky='W',column=0, row=2,padx=10, pady=10)
-    
+
+
+def distancePathee(ee):       #werkt enkel wanneer circle= False, want path is niet van start naar punt1 als circle=true
+        x, y, z, _ = ee     #berekent enkel afstand van elk punt naar pad van start naar punt1
+        v = np.array([punt1[0] - startpunt[0], punt1[1] - startpunt[1], punt1[2] - startpunt[2]])
+        u = np.array([x - startpunt[0], y - startpunt[1], z - startpunt[2]])
+        distance = np.linalg.norm(np.cross(v, u)) / np.linalg.norm(v)
+        print(distance)
+
 print ('runtime: ',datetime.now()-start)
 
 
