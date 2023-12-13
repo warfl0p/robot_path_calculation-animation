@@ -42,10 +42,10 @@ var3range=[0,np.pi*2]
 var4range=[0,np.pi*2]
 var5range=[0,      1]
 var6range=[0,      1]
-circle=True
-ra= 0.4                          #radius of circle
-punt1=[0.5,-0.5,  0]           #is center cirkel als circle=True
-punt2=[1  ,  -2,0.1]           #einde traject als circle=False
+circle=False
+ra= 0.4                             #radius of circle
+punt1=[-0.5,  1,   0]               #is center cirkel als circle=True
+punt2=[ -1, -2, 0.0]                #einde traject als circle=False
 
 def jacobian(givenVarList):
     theta1= givenVarList[0]
